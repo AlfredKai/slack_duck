@@ -1,7 +1,10 @@
 import sqlite3
+from os import path, getcwd
 
 
-connection = sqlite3.connect('data.db')
+abs_cwd = (path.join(getcwd(), path.dirname(__file__)))
+
+connection = sqlite3.connect(path.join(abs_cwd, "data.db"))
 cursor = connection.cursor()
 
 
