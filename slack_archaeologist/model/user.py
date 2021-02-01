@@ -1,12 +1,11 @@
-from model.dbconnection import cursor, Db
+from model.dbconnection import cursor, Dbconnection
 
 
-class User(Db):
+class User(Dbconnection):
 
     table_name = 'User'
 
     def __init__(self, user_id, name, title, real_name, display_name, img_org, img_48):
-        self.id = id
         self.user_id = user_id
         self.name = name
         self.title = title
@@ -28,7 +27,11 @@ class User(Db):
                             )'
         cursor.execute(create_table)
 
+    @classmethod
+    def get_users(cls):
+        query = f'SELECT * FROM User'
+        return list(map(lambda x: User(*x), cursor.execute(query).fetchall()))
+
     def save(self):
-        data = (self.user_id, self.name, self.title, self.real_name, self.display_name, self.img_org, self.img_48)
         insert_query = f'INSERT INTO {self.table_name} VALUES (?, ?, ?, ?, ?, ?, ?)'
-        cursor.execute(insert_query, data)
+        cursor.execute(insert_query, self.row)

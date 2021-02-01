@@ -17,12 +17,12 @@ def save_channel_history():
 
     while True:
         data = conversation_history(config.token, config.channel_id, cursor)
-        last_msg = data["messages"][-1]
-        print(time.strftime('%Y-%m-%d %H:%M:%S',
-                            time.localtime(float(last_msg["ts"]))), last_msg['text'])
+        first_msg = data["messages"][0]
+        print('first message', time.strftime('%Y-%m-%d %H:%M:%S',
+                            time.localtime(float(first_msg["ts"]))), first_msg['text'])
 
         for msg in data['messages']:
-            Message(msg["ts"], msg.get('user', None), msg.get(
+            Message(None, msg["ts"], msg.get('user', None), msg.get(
                 'bot_id', None), msg.get('subtype', None), msg["text"]).save()
             count += 1
 

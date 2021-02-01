@@ -4,11 +4,11 @@ from os import path, getcwd
 
 abs_cwd = (path.join(getcwd(), path.dirname(__file__)))
 
-connection = sqlite3.connect(path.join(abs_cwd, "data.db"))
+connection = sqlite3.connect(path.join(abs_cwd, "data.db"), check_same_thread=False)
 cursor = connection.cursor()
 
 
-class Db():
+class Dbconnection():
 
     @staticmethod
     def commit():
@@ -17,3 +17,7 @@ class Db():
     @classmethod
     def drop_table(cls):
         cursor.execute(f"DROP TABLE IF Exists {cls.table_name}")
+
+    @property
+    def row(self):
+        return tuple(self.__dict__.values())

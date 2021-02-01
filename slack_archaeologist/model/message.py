@@ -1,11 +1,12 @@
-from model.dbconnection import cursor, Db
+from model.dbconnection import cursor, Dbconnection
 
 
-class Message(Db):
+class Message(Dbconnection):
 
     table_name = 'Message'
 
-    def __init__(self, ts, user_id, bot_id, subtype, text):
+    def __init__(self, id, ts, user_id, bot_id, subtype, text):
+        self.id = id
         self.ts = ts
         self.user_id = user_id
         self.bot_id = bot_id
@@ -29,7 +30,11 @@ class Message(Db):
         query = f'SELECT DISTINCT user_id FROM {cls.table_name} WHERE user_id IS NOT NULL'
         return list(map(lambda x: x[0], cursor.execute(query).fetchall()))
 
+    @classmethod
+    def get_messages(cls, offset=0, limit=20):
+        query = f'SELECT * FROM {cls.table_name} order by ts LIMIT ?, ?'
+        return list(map(lambda x: Message(*x), cursor.execute(query, (offset, limit)).fetchall()))
+
     def save(self):
-        data = (None, self.ts, self.user_id, self.bot_id, self.subtype, self.text)
         insert_query = f'INSERT INTO {self.table_name} VALUES (?, ?, ?, ?, ?, ?)'
-        cursor.execute(insert_query, data)
+        cursor.execute(insert_query, self.row)

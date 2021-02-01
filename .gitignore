@@ -5,3 +5,5 @@ test.py
 config.py
 
 __pycache__/
+
+.vscode/
