@@ -1,4 +1,4 @@
-from model.dbconnection import cursor, Dbconnection
+from model.dbconnection import connection, Dbconnection
 
 
 class User(Dbconnection):
@@ -25,13 +25,13 @@ class User(Dbconnection):
                             img_org text, \
                             img_48 text\
                             )'
-        cursor.execute(create_table)
+        connection.cursor().execute(create_table)
 
     @classmethod
     def get_users(cls):
         query = f'SELECT * FROM User'
-        return list(map(lambda x: User(*x), cursor.execute(query).fetchall()))
+        return list(map(lambda x: User(*x), connection.cursor().execute(query).fetchall()))
 
     def save(self):
         insert_query = f'INSERT INTO {self.table_name} VALUES (?, ?, ?, ?, ?, ?, ?)'
-        cursor.execute(insert_query, self.row)
+        connection.cursor().execute(insert_query, self.row)

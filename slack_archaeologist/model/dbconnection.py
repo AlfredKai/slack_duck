@@ -5,7 +5,6 @@ from os import path, getcwd
 abs_cwd = (path.join(getcwd(), path.dirname(__file__)))
 
 connection = sqlite3.connect(path.join(abs_cwd, "data.db"), check_same_thread=False)
-cursor = connection.cursor()
 
 
 class Dbconnection():
@@ -16,7 +15,7 @@ class Dbconnection():
 
     @classmethod
     def drop_table(cls):
-        cursor.execute(f"DROP TABLE IF Exists {cls.table_name}")
+        connection.cursor().execute(f"DROP TABLE IF Exists {cls.table_name}")
 
     @property
     def row(self):

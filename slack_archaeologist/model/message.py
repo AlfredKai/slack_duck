@@ -1,4 +1,4 @@
-from model.dbconnection import cursor, Dbconnection
+from model.dbconnection import connection, Dbconnection
 
 
 class Message(Dbconnection):
@@ -23,18 +23,18 @@ class Message(Dbconnection):
                             subtype VARCHAR(50), \
                             text TEXT\
                             )"
-        cursor.execute(create_table)
+        connection.cursor().execute(create_table)
 
     @classmethod
     def get_user_ids(cls):
         query = f'SELECT DISTINCT user_id FROM {cls.table_name} WHERE user_id IS NOT NULL'
-        return list(map(lambda x: x[0], cursor.execute(query).fetchall()))
+        return list(map(lambda x: x[0], connection.cursor().execute(query).fetchall()))
 
     @classmethod
     def get_messages(cls, offset=0, limit=20):
         query = f'SELECT * FROM {cls.table_name} order by ts LIMIT ?, ?'
-        return list(map(lambda x: Message(*x), cursor.execute(query, (offset, limit)).fetchall()))
+        return list(map(lambda x: Message(*x), connection.cursor().execute(query, (offset, limit)).fetchall()))
 
     def save(self):
         insert_query = f'INSERT INTO {self.table_name} VALUES (?, ?, ?, ?, ?, ?)'
-        cursor.execute(insert_query, self.row)
+        connection.cursor().execute(insert_query, self.row)

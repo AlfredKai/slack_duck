@@ -4,6 +4,8 @@ sys.path.append("../slack_archaeologist")
 from model.user import User
 from model.message import Message
 
+from config import wellcome_message
+
 app = Flask(__name__)
 
 
@@ -33,7 +35,7 @@ def messages():
 
 @app.route('/')
 def hello_world():
-    return 'hello_world'
+    return wellcome_message
 
 
 
