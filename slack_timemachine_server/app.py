@@ -36,9 +36,3 @@ def messages():
 @app.route('/')
 def hello_world():
     return wellcome_message
-
-
-
-
-def _model_list_2_dict(models):
-    return list(map(lambda x: x.__dict__, models))

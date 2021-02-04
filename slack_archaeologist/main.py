@@ -22,8 +22,8 @@ def save_channel_history():
                             time.localtime(float(first_msg["ts"]))), first_msg['text'])
 
         for msg in data['messages']:
-            Message(None, msg["ts"], msg.get('user', None), msg.get(
-                'bot_id', None), msg.get('subtype', None), msg["text"]).save()
+            Message(None, msg["ts"], msg.get('user', None), msg.get('bot_id', None), msg.get('subtype', None),
+            msg["text"], msg.get('icons', {}).get('image_64', None), msg.get('username', None)).save()
             count += 1
 
         if 'response_metadata' not in data or 'next_cursor' not in data['response_metadata']:

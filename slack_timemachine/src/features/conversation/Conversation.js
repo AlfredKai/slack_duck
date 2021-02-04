@@ -48,8 +48,8 @@ export function Conversation() {
     <Message
       key={x.ts}
       text={x.text}
-      img={(x.user_id && getUser(x.user_id).img_48) || ''}
-      user={(x.user_id && getUser(x.user_id).name) || ''}
+      img={(x.img_64 || (x.user_id && getUser(x.user_id).img_48))}
+      user={(x.username || (x.user_id && getUser(x.user_id).name))}
     />
   ));
   return (

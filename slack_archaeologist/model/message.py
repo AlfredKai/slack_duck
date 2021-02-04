@@ -5,13 +5,15 @@ class Message(Dbconnection):
 
     table_name = 'Message'
 
-    def __init__(self, id, ts, user_id, bot_id, subtype, text):
+    def __init__(self, id, ts, user_id, bot_id, subtype, text, img_64, username):
         self.id = id
         self.ts = ts
         self.user_id = user_id
         self.bot_id = bot_id
         self.subtype = subtype
         self.text = text
+        self.img_64 = img_64
+        self.username = username
 
     @classmethod
     def create_table(cls):
@@ -21,7 +23,9 @@ class Message(Dbconnection):
                             user_id VARCHAR(50),\
                             bot_id VARCHAR(50), \
                             subtype VARCHAR(50), \
-                            text TEXT\
+                            text TEXT, \
+                            img_64 TEXT, \
+                            username VARCHAR(50) \
                             )"
         connection.cursor().execute(create_table)
 
@@ -36,5 +40,5 @@ class Message(Dbconnection):
         return list(map(lambda x: Message(*x), connection.cursor().execute(query, (offset, limit)).fetchall()))
 
     def save(self):
-        insert_query = f'INSERT INTO {self.table_name} VALUES (?, ?, ?, ?, ?, ?)'
+        insert_query = f'INSERT INTO {self.table_name} VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
         connection.cursor().execute(insert_query, self.row)
