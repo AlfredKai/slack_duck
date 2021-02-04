@@ -3,7 +3,7 @@ from model.dbconnection import connection, Dbconnection
 
 class User(Dbconnection):
 
-    table_name = 'User'
+    table_name = 'user'
 
     def __init__(self, user_id, name, title, real_name, display_name, img_org, img_48):
         self.user_id = user_id

@@ -3,7 +3,7 @@ from model.dbconnection import connection, Dbconnection
 
 class Message(Dbconnection):
 
-    table_name = 'Message'
+    table_name = 'message'
 
     def __init__(self, id, ts, user_id, bot_id, subtype, text, img_64, username):
         self.id = id

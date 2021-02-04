@@ -4,9 +4,8 @@ sys.path.append("../slack_archaeologist")
 from model.user import User
 from model.message import Message
 
-from config import wellcome_message
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../slack_timemachine/build', static_url_path='/')
 
 
 def model_list(func):
@@ -34,5 +33,5 @@ def messages():
 
 
 @app.route('/')
-def hello_world():
-    return wellcome_message
+def index():
+    return app.send_static_file('index.html')

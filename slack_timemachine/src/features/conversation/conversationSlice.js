@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 export const fetchMessages = createAsyncThunk(
   'users/fetchMessagesStatus',
   async (offset = 0) => {
-    let data = await fetch(`/messages?offset=${offset}&limit=500`);
+    let data = await fetch(`/messages?offset=${offset}&limit=100`);
     let jsonData = await data.json();
     return jsonData.messages;
   }
