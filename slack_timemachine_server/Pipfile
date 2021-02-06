@@ -9,6 +9,7 @@ autopep8 = "*"
 [packages]
 flask = "*"
 flask-cors = "*"
+bcrypt = "*"
 
 [requires]
 python_version = "3.8"

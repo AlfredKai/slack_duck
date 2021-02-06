@@ -1,7 +1,7 @@
 import React, { useEffect, createRef, forwardRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchMessages, selectMessages } from './conversationSlice';
-import { fetchUsersAsync, selectUsers } from './userSlice';
+import { fetchUsers, selectUsers } from './userSlice';
 import { Message } from './Message';
 
 const Loader = forwardRef((_, ref) => (
@@ -10,21 +10,21 @@ const Loader = forwardRef((_, ref) => (
 
 export function Conversation() {
   const messages = useSelector(selectMessages);
-  const messagesStatus = useSelector((state) => state.conversation.status);
   const isEnd = useSelector((state) => state.conversation.isEnd);
   const users = useSelector(selectUsers);
+  const usersStatus = useSelector((state) => state.user.status);
   const loaderRef = createRef();
   const dispatch = useDispatch();
   const getUser = (user_id) => users.filter((x) => x.user_id === user_id)[0];
 
   useEffect(() => {
-    dispatch(fetchUsersAsync());
+    dispatch(fetchUsers());
   }, [dispatch]);
 
   useEffect(() => {
     let callback = (entries) => {
       entries.forEach((entry) => {
-        if (messagesStatus === 'idle' && entry.isIntersecting) {
+        if (entry.isIntersecting && usersStatus === 'fetched') {
           dispatch(fetchMessages(messages.length));
         }
       });
@@ -42,7 +42,7 @@ export function Conversation() {
         observer.unobserve(cacheRef);
       }
     };
-  }, [loaderRef, dispatch, messages.length, messagesStatus]);
+  }, [loaderRef, dispatch, messages.length, usersStatus]);
 
   let messageBlocks = messages.map((x) => (
     <Message

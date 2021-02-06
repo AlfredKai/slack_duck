@@ -13,7 +13,6 @@ export const conversationSlice = createSlice({
   name: 'conversation',
   initialState: {
     messages: [],
-    status: 'idle',
     isEnd: false,
     error: null,
   },

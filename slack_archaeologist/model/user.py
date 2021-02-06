@@ -29,7 +29,7 @@ class User(Dbconnection):
 
     @classmethod
     def get_users(cls):
-        query = f'SELECT * FROM User'
+        query = f'SELECT * FROM {cls.table_name}'
         return list(map(lambda x: User(*x), connection.cursor().execute(query).fetchall()))
 
     def save(self):
