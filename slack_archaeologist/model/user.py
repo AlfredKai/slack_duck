@@ -31,7 +31,3 @@ class User(Dbconnection):
     def get_users(cls):
         query = f'SELECT * FROM {cls.table_name}'
         return list(map(lambda x: User(*x), connection.cursor().execute(query).fetchall()))
-
-    def save(self):
-        insert_query = f'INSERT INTO {self.table_name} VALUES (?, ?, ?, ?, ?, ?, ?)'
-        connection.cursor().execute(insert_query, self.row)

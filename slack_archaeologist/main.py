@@ -1,6 +1,6 @@
 import time
 
-from api.conversation_history import conversation_history
+from api import conversation
 from api.user_info import user_info
 from model.message import Message
 from model.user import User
@@ -16,19 +16,36 @@ def save_channel_history():
     count = 0
 
     while True:
-        data = conversation_history(config.token, config.channel_id, cursor)
-        first_msg = data["messages"][0]
+        data, cursor = conversation.history(config.token, config.channel_id, cursor)
+        print(cursor)
+        first_msg = data[0]
         print('first message', time.strftime('%Y-%m-%d %H:%M:%S',
-                            time.localtime(float(first_msg["ts"]))), first_msg['text'])
+                                             time.localtime(float(first_msg["ts"]))), first_msg['text'])
+        print(cursor)
+        def save_messages(messages, is_thread):
+            nonlocal count
+            for msg in messages:
+                Message(None,
+                        msg["ts"],
+                        msg.get('user', None),
+                        msg.get('bot_id', None),
+                        msg.get('subtype', None),
+                        msg["text"],
+                        msg.get('icons', {}).get('image_64', None),
+                        msg.get('username', None),
+                        msg.get('thread_ts', None),
+                        is_thread
+                        ).save()
+                count += 1
 
-        for msg in data['messages']:
-            Message(None, msg["ts"], msg.get('user', None), msg.get('bot_id', None), msg.get('subtype', None),
-            msg["text"], msg.get('icons', {}).get('image_64', None), msg.get('username', None)).save()
-            count += 1
+                if 'thread_ts' in msg and not is_thread:
+                    data, cursor = conversation.replies(config.token, config.channel_id, msg['thread_ts'])
+                    save_messages(data, True)
 
-        if 'response_metadata' not in data or 'next_cursor' not in data['response_metadata']:
+        save_messages(data, False)
+
+        if not cursor:
             break
-        cursor = data['response_metadata']['next_cursor']
 
     Message.commit()
     print(f'saved {count} messages.')

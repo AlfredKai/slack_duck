@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { welcomeMessage } from '../../config';
+import { chooseWelcomeMessages } from '../../config';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchEnter, selectIsEntered } from './enterSlice';
 
@@ -24,7 +24,7 @@ export function Enter() {
       <div className="column">
         <h2 className="ui image header">
           <img className="image" src="logo.jpg" alt="" />
-          <div className="content">{welcomeMessage}</div>
+          <div className="content">{chooseWelcomeMessages()}</div>
         </h2>
         <div className="ui large form error">
           <div className="ui stacked segment">

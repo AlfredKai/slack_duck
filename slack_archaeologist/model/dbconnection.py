@@ -20,3 +20,8 @@ class Dbconnection():
     @property
     def row(self):
         return tuple(self.__dict__.values())
+
+    def save(self):
+        values_str = '(?' + ',?' * (len(self.__dict__) - 1) + ')'
+        insert_query = f'INSERT INTO {self.table_name} VALUES {values_str}'
+        connection.cursor().execute(insert_query, self.row)

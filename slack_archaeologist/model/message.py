@@ -5,7 +5,7 @@ class Message(Dbconnection):
 
     table_name = 'message'
 
-    def __init__(self, id, ts, user_id, bot_id, subtype, text, img_64, username):
+    def __init__(self, id, ts, user_id, bot_id, subtype, text, img_64, username, thread_ts, is_thread):
         self.id = id
         self.ts = ts
         self.user_id = user_id
@@ -14,6 +14,8 @@ class Message(Dbconnection):
         self.text = text
         self.img_64 = img_64
         self.username = username
+        self.thread_ts = thread_ts
+        self.is_thread = is_thread
 
     @classmethod
     def create_table(cls):
@@ -25,7 +27,9 @@ class Message(Dbconnection):
                             subtype VARCHAR(50), \
                             text TEXT, \
                             img_64 TEXT, \
-                            username VARCHAR(50) \
+                            username VARCHAR(50), \
+                            thread_ts TIMESTAMP, \
+                            is_thread INT2 \
                             )"
         connection.cursor().execute(create_table)
 
@@ -38,7 +42,3 @@ class Message(Dbconnection):
     def get_messages(cls, offset=0, limit=20):
         query = f'SELECT * FROM {cls.table_name} order by ts LIMIT ?, ?'
         return list(map(lambda x: Message(*x), connection.cursor().execute(query, (offset, limit)).fetchall()))
-
-    def save(self):
-        insert_query = f'INSERT INTO {self.table_name} VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
-        connection.cursor().execute(insert_query, self.row)
