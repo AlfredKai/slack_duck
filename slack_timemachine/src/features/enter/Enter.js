@@ -21,7 +21,7 @@ export function Enter() {
 
   return (
     <div className="ui middle aligned center aligned grid">
-      <div className="column">
+      <div className="enterColumn">
         <h2 className="ui image header">
           <img className="image" src="logo.jpg" alt="" />
           <div className="content">{chooseWelcomeMessages()}</div>

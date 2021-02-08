@@ -40,5 +40,11 @@ class Message(Dbconnection):
 
     @classmethod
     def get_messages(cls, offset=0, limit=20):
-        query = f'SELECT * FROM {cls.table_name} order by ts LIMIT ?, ?'
+        query = f'SELECT * FROM {cls.table_name} WHERE is_thread=0 ORDER BY ts LIMIT ?, ?'
         return list(map(lambda x: Message(*x), connection.cursor().execute(query, (offset, limit)).fetchall()))
+
+    @classmethod
+    def get_replies(cls, thread_ts):
+        params = '(?' + ',?' * (len(thread_ts) - 1) + ')'
+        query = f'SELECT * FROM {cls.table_name} WHERE is_thread=1 AND thread_ts IN {params}'
+        return list(map(lambda x: Message(*x), connection.cursor().execute(query, tuple(thread_ts)).fetchall()))

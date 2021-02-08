@@ -5,7 +5,7 @@ from api.request import request
 def history(token, channel_id, cursor=None):
     result = request('GET', '/api/conversations.history',
                      token=token, channel=channel_id, cursor=cursor)
-    print(f'get messages {len(result)}')
+    print(f'get messages {len(result["messages"])}')
     return result['messages'], result['response_metadata']['next_cursor'] if 'response_metadata' in result and 'next_cursor' in result['response_metadata'] else None
 
 

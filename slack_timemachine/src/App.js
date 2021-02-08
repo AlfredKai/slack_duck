@@ -11,11 +11,7 @@ function App() {
       <header></header>
       <main>
         {!isEntered && <Enter />}
-        {isEntered && (
-          <div className="ui very padded text container segment">
-            <Conversation />
-          </div>
-        )}
+        {isEntered && <Conversation />}
       </main>
     </>
   );

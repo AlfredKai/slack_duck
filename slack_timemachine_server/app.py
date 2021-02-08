@@ -1,11 +1,13 @@
 import sys
 sys.path.append("../slack_archaeologist")
-from website_model import Website
-from model.message import Message
-from model.user import User
-from flask import Flask, request
-import click
 import bcrypt
+import click
+import functools
+from collections import defaultdict
+from flask import Flask, request
+from model.user import User
+from model.message import Message
+from website_model import Website
 
 
 app = Flask(__name__, static_folder='../slack_timemachine/build',
@@ -13,10 +15,9 @@ app = Flask(__name__, static_folder='../slack_timemachine/build',
 
 
 def model_list(func):
+    @functools.wraps(func)
     def wrapper():
         return {func.__name__: list(map(lambda x: x.__dict__, func()))}
-    globals()['wrapper'] = wrapper
-    wrapper.__name__ = 'wrapper_' + func.__name__
     return wrapper
 
 
@@ -27,13 +28,42 @@ def users():
 
 
 @app.route('/messages')
-@model_list
 def messages():
     params = {}
     for key, val in request.args.items():
         if key in ('limit', 'offset'):
             params[key] = val
-    return Message.get_messages(**params)
+ 
+    thread_tss = []
+    messages = Message.get_messages(**params)
+    for msg in messages:
+        thread_tss.append(msg.thread_ts)
+    
+    reply_users = defaultdict(set)
+    reply_counts = defaultdict(int)
+    for reply in Message.get_replies(thread_tss):
+        reply_users[reply.thread_ts].add(reply.user_id)
+        reply_counts[reply.thread_ts] += 1
+
+    resp = {'messages': []}
+    for msg in messages:
+        if 'thread_ts' in msg.__dict__ and msg.thread_ts != None:
+            temp = msg.__dict__
+            temp['reply_count'] = reply_counts[msg.thread_ts]
+            temp['reply_users'] = list(reply_users[msg.thread_ts])
+            resp['messages'].append(temp)
+        else:
+            resp['messages'].append(msg.__dict__)
+    
+    return resp
+
+
+@app.route('/replies')
+@model_list
+def replies():
+    thread_ts = request.args.get('thread_ts', None)
+
+    return Message.get_replies([thread_ts])
 
 
 @app.route('/')
