@@ -8,6 +8,7 @@ import {
 } from './conversationSlice';
 import { fetchUsers, selectUsers } from './userSlice';
 import { Message, MessageLoader } from './Message';
+import { fetchVisit } from '../enter/enterSlice';
 
 const Loader = forwardRef((_, ref) => (
   <div ref={ref}>
@@ -24,6 +25,10 @@ export function Conversation() {
   const loaderRef = createRef();
   const dispatch = useDispatch();
   const getUser = (user_id) => users.filter((x) => x.user_id === user_id)[0];
+
+  useEffect(() => {
+    dispatch(fetchVisit());
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(fetchUsers());

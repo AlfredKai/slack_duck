@@ -12,10 +12,28 @@ export const fetchEnter = createAsyncThunk(
   }
 );
 
+export const fetchVisitCount = createAsyncThunk(
+  'enter/fetchVisitCount',
+  async () => {
+    let data = await fetch('visit', {
+      method: 'GET',
+    });
+    let jsonData = await data.json();
+    return jsonData.visit_count;
+  }
+);
+
+export const fetchVisit = createAsyncThunk('enter/fetchVisit', async () => {
+  fetch('visit', {
+    method: 'POST',
+  });
+});
+
 export const enterSlice = createSlice({
   name: 'enter',
   initialState: {
     isEntered: null,
+    visitCount: null,
   },
   extraReducers: {
     [fetchEnter.fulfilled]: (state, action) => {
@@ -23,6 +41,9 @@ export const enterSlice = createSlice({
     },
     [fetchEnter.pending]: (state, action) => {
       state.isEntered = null;
+    },
+    [fetchVisitCount.fulfilled]: (state, action) => {
+      state.visitCount = action.payload;
     },
   },
 });

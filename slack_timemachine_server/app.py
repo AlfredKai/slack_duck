@@ -1,13 +1,13 @@
 import sys
 sys.path.append("../slack_archaeologist")
-import bcrypt
-import click
-import functools
-from collections import defaultdict
-from flask import Flask, request
-from model.user import User
-from model.message import Message
 from website_model import Website
+from model.message import Message
+from model.user import User
+from flask import Flask, request
+from collections import defaultdict
+import functools
+import click
+import bcrypt
 
 
 app = Flask(__name__, static_folder='../slack_timemachine/build',
@@ -33,12 +33,12 @@ def messages():
     for key, val in request.args.items():
         if key in ('limit', 'offset'):
             params[key] = val
- 
+
     thread_tss = []
     messages = Message.get_messages(**params)
     for msg in messages:
         thread_tss.append(msg.thread_ts)
-    
+
     reply_users = defaultdict(set)
     reply_counts = defaultdict(int)
     for reply in Message.get_replies(thread_tss):
@@ -55,7 +55,7 @@ def messages():
             resp['messages'].append(temp)
         else:
             resp['messages'].append(msg.__dict__)
-    
+
     return resp
 
 
@@ -81,11 +81,26 @@ def enter():
         return {"ok": False}
 
 
+@app.route('/visit', methods=['POST'])
+def update_visit_count():
+    Website.update_visit_count()
+    return {"ok": True}
+
+
+@app.route('/visit')
+def get_visit_count():
+    return {"visit_count": Website.get_visit_count()}
+
+
+# flask set_pwd xxx
 @app.cli.command("set_pwd")
 @click.argument("password")
 def set_pwd(password):
+    hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+    Website.set_password(hashed)
+
+
+@app.cli.command("clear_website")
+def clear_website():
     Website.drop_table()
     Website.create_table()
-    hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
-    Website(hashed).save()
-    Website.commit()
