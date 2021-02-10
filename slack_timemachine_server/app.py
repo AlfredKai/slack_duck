@@ -42,8 +42,9 @@ def messages():
     reply_users = defaultdict(set)
     reply_counts = defaultdict(int)
     for reply in Message.get_replies(thread_tss):
-        reply_users[reply.thread_ts].add(reply.user_id)
-        reply_counts[reply.thread_ts] += 1
+        if reply.is_thread:
+            reply_users[reply.thread_ts].add(reply.user_id)
+            reply_counts[reply.thread_ts] += 1
 
     resp = {'messages': []}
     for msg in messages:

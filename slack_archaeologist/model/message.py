@@ -46,5 +46,5 @@ class Message(Dbconnection):
     @classmethod
     def get_replies(cls, thread_ts):
         params = '(?' + ',?' * (len(thread_ts) - 1) + ')'
-        query = f'SELECT * FROM {cls.table_name} WHERE is_thread=1 AND thread_ts IN {params}'
+        query = f'SELECT * FROM {cls.table_name} WHERE thread_ts IN {params}'
         return list(map(lambda x: Message(*x), connection.cursor().execute(query, tuple(thread_ts)).fetchall()))

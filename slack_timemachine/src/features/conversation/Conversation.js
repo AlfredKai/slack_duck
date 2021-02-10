@@ -7,10 +7,12 @@ import {
   selectReplies,
 } from './conversationSlice';
 import { fetchUsers, selectUsers } from './userSlice';
-import { Message } from './Message';
+import { Message, MessageLoader } from './Message';
 
 const Loader = forwardRef((_, ref) => (
-  <div ref={ref} className="ui active centered inline loader"></div>
+  <div ref={ref}>
+    <MessageLoader />
+  </div>
 ));
 
 export function Conversation() {
@@ -50,43 +52,47 @@ export function Conversation() {
     };
   }, [loaderRef, dispatch, messages.length, usersStatus]);
 
-  function handleClick(o) {
-    console.log('The link was clicked.', o);
-    dispatch(fetchReplies(o));
+  function handleReplyClick(thread_ts) {
+    dispatch(fetchReplies(thread_ts));
   }
 
-  let messageSection = (messages) =>
-    messages.map((x) => (
-      // console.log((x.reply_users && x.reply_users.map((x) => getUser(x).img_48) || [])) ????
-      <Message
-        key={x.ts}
-        thread_ts={x.thread_ts}
-        text={x.text}
-        img={x.img_64 || (x.user_id && getUser(x.user_id).img_48)}
-        user={x.username || (x.user_id && getUser(x.user_id).name)}
-        replyUserImgs={
-          (x.reply_users && x.reply_users.map((x) => getUser(x).img_48)) || []
-        }
-        replyCount={x.reply_count}
-        onReplyClick={handleClick}
-      />
+  let messageSection = (messages, thread = false) =>
+    messages.map((x, index) => (
+      <div key={x.ts}>
+        {index === 1 && thread && (
+          <div className="flex mx-4 text-gray-500">
+            <div>replies</div>
+            <div className="border-t border-gray-500 border-solid mt-3 w-full mx-2"></div>
+          </div>
+        )}
+        <Message
+          thread_ts={x.thread_ts}
+          text={x.text}
+          img={x.img_64 || (x.user_id && getUser(x.user_id).img_48)}
+          user={x.username || (x.user_id && getUser(x.user_id).name)}
+          replyUserImgs={
+            (x.reply_users && x.reply_users.map((x) => getUser(x).img_48)) || []
+          }
+          replyCount={x.reply_count}
+          onReplyClick={handleReplyClick}
+        />
+      </div>
     ));
   return (
-    <div className="ui three column grid">
-      <div className="column"></div>
-      <div className="column">
-        <div className="ui segment">
-          <div className="ui comments">{messageSection(messages)}</div>
-          {!isEnd && <Loader ref={loaderRef} />}
-        </div>
+    <div className="flex">
+      <div
+        className={
+          'h-screen overflow-y-auto' + (replies.length !== 0 ? ' w-3/4' : '')
+        }
+      >
+        {messageSection(messages)}
+        {!isEnd && <Loader ref={loaderRef} />}
       </div>
-      <div className="column">
-        <div class="ui right fixed massive vertical menu">
-          <div className="ui top fixed">
-            {replies && messageSection(replies)}
-          </div>
+      {replies.length !== 0 && (
+        <div className="w-1/4 h-screen overflow-y-auto">
+          {messageSection(replies, true)}
         </div>
-      </div>
+      )}
     </div>
   );
 }
