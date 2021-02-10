@@ -30,4 +30,4 @@ class User(Dbconnection):
     @classmethod
     def get_users(cls):
         query = f'SELECT * FROM {cls.table_name}'
-        return list(map(lambda x: User(*x), connection.cursor().execute(query).fetchall()))
+        return list(map(lambda x: cls(*x), connection.cursor().execute(query).fetchall()))

@@ -49,7 +49,7 @@ export function Enter() {
     <div className="flex items-center justify-center h-screen flex-col bg-gray-700">
       <header>
         <h2 className="flex m-4">
-          <img className="w-16 m-2" src="logo.jpg" alt="" />
+          <img className="w-16 h-16 m-2" src="logo.jpg" alt="" />
           <div className="flex items-center text-3xl text-gray-300">
             {welcomeMessage}
           </div>

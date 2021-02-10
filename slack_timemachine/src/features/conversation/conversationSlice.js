@@ -18,11 +18,21 @@ export const fetchReplies = createAsyncThunk(
   }
 );
 
+export const fetchChannelInfo = createAsyncThunk(
+  'users/fetchChannelInfo',
+  async (thread_ts) => {
+    let data = await fetch(`/channel_info`);
+    let jsonData = await data.json();
+    return jsonData.channel;
+  }
+);
+
 export const conversationSlice = createSlice({
   name: 'conversation',
   initialState: {
     messages: [],
     replies: [],
+    channel: {},
     isEnd: false,
     error: null,
   },
@@ -38,6 +48,9 @@ export const conversationSlice = createSlice({
     },
     [fetchReplies.fulfilled]: (state, action) => {
       state.replies = action.payload;
+    },
+    [fetchChannelInfo.fulfilled]: (state, action) => {
+      state.channel = action.payload;
     },
   },
 });

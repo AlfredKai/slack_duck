@@ -3,5 +3,5 @@
 ## Usage
 
 ```bat
-set "FLASK_ENV=development" && flask run
+set "FLASK_ENV=development" && flask run --host xxx --port xxx
 ```

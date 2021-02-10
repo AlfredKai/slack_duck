@@ -4,6 +4,7 @@ from api import conversation
 from api.user_info import user_info
 from model.message import Message
 from model.user import User
+from model.channel import Channel
 
 import config
 
@@ -16,12 +17,12 @@ def save_channel_history():
     count = 0
 
     while True:
-        data, cursor = conversation.history(config.token, config.channel_id, cursor)
-        print(cursor)
+        data, cursor = conversation.history(
+            config.token, config.channel_id, cursor)
         first_msg = data[0]
         print('first message', time.strftime('%Y-%m-%d %H:%M:%S',
                                              time.localtime(float(first_msg["ts"]))), first_msg['text'])
-        print(cursor)
+
         def save_messages(messages, is_thread):
             nonlocal count
             for msg in messages:
@@ -39,7 +40,8 @@ def save_channel_history():
                 count += 1
 
                 if 'thread_ts' in msg and not is_thread:
-                    data, cursor = conversation.replies(config.token, config.channel_id, msg['thread_ts'])
+                    data, cursor = conversation.replies(
+                        config.token, config.channel_id, msg['thread_ts'])
                     save_messages(data, True)
 
         save_messages(data, False)
@@ -71,5 +73,19 @@ def save_users(user_ids):
     print(f'saved {count} users.')
 
 
+def save_channel_info():
+    Channel.drop_table()
+    Channel.create_table()
+
+    data = conversation.info(config.token, config.channel_id)
+
+    Channel(data['id'], data['name'], data['topic']['value'],
+            data['purpose']['value'], data['creator'], data['created']).save()
+    Channel.commit()
+
+    print(f'saved channel info.')
+
+
+save_channel_info()
 save_channel_history()
 save_users(Message.get_user_ids())

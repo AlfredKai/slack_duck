@@ -1,13 +1,14 @@
 import sys
 sys.path.append("../slack_archaeologist")
-from website_model import Website
-from model.message import Message
-from model.user import User
-from flask import Flask, request
-from collections import defaultdict
-import functools
-import click
 import bcrypt
+import click
+import functools
+from collections import defaultdict
+from flask import Flask, request
+from model.channel import Channel
+from model.user import User
+from model.message import Message
+from website_model import Website
 
 
 app = Flask(__name__, static_folder='../slack_timemachine/build',
@@ -79,6 +80,11 @@ def enter():
         return {"ok": True}
     else:
         return {"ok": False}
+
+
+@app.route('/channel_info')
+def get_channel_info():
+    return {"channel": Channel.get_channel_info().__dict__}
 
 
 @app.route('/visit', methods=['POST'])

@@ -1,6 +1,7 @@
 import React, { useEffect, createRef, forwardRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
+  fetchChannelInfo,
   fetchMessages,
   selectMessages,
   fetchReplies,
@@ -25,6 +26,10 @@ export function Conversation() {
   const loaderRef = createRef();
   const dispatch = useDispatch();
   const getUser = (user_id) => users.filter((x) => x.user_id === user_id)[0];
+
+  useEffect(() => {
+    dispatch(fetchChannelInfo());
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(fetchVisit());
