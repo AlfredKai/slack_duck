@@ -23,6 +23,8 @@ function LockIcon({ onClick }) {
   );
 }
 
+const welcomeMessage = chooseWelcomeMessages()
+
 export function Enter() {
   const dispatch = useDispatch();
   const isEntered = useSelector(selectIsEntered);
@@ -44,7 +46,7 @@ export function Enter() {
       <h2 className="flex m-4">
         <img className="w-16 m-2" src="logo.jpg" alt="" />
         <div className="flex items-center text-3xl text-gray-300">
-          {chooseWelcomeMessages()}
+          {welcomeMessage}
         </div>
       </h2>
       <div className="flex items-center">
