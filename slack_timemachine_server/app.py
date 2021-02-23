@@ -1,8 +1,11 @@
 import sys
+
+from flask.globals import session
 sys.path.append("../slack_archaeologist")
 import bcrypt
 import click
 import functools
+import config
 from collections import defaultdict
 from flask import Flask, request
 from model.channel import Channel
@@ -14,6 +17,7 @@ from website_model import Website
 app = Flask(__name__, static_folder='../slack_timemachine/build',
             static_url_path='/')
 
+app.secret_key = config.app_secret_key
 
 def model_list(func):
     @functools.wraps(func)
@@ -22,13 +26,24 @@ def model_list(func):
     return wrapper
 
 
+def auth_required(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        if 'auth' not in session or not session['auth']:
+            return {}, 401
+        return func(*args, **kwargs)
+    return wrapper
+
+
 @app.route('/users')
+@auth_required
 @model_list
 def users():
     return User.get_users()
 
 
 @app.route('/messages')
+@auth_required
 def messages():
     params = {}
     for key, val in request.args.items():
@@ -61,6 +76,7 @@ def messages():
 
 
 @app.route('/replies')
+@auth_required
 @model_list
 def replies():
     thread_ts = request.args.get('thread_ts', None)
@@ -77,12 +93,14 @@ def index():
 def enter():
     data = request.get_json(force=True)
     if bcrypt.checkpw(data['password'].encode(), Website.get_password()):
+        session['auth'] = True 
         return {"ok": True}
     else:
         return {"ok": False}
 
 
 @app.route('/channel_info')
+@auth_required
 def get_channel_info():
     return {"channel": Channel.get_channel_info().__dict__}
 
