@@ -5,9 +5,10 @@ class Message(Dbconnection):
 
     table_name = 'message'
 
-    def __init__(self, id, ts, user_id, bot_id, subtype, text, img_64, username, thread_ts, is_thread):
+    def __init__(self, id, ts, channel_id, user_id, bot_id, subtype, text, img_64, username, thread_ts, is_thread):
         self.id = id
         self.ts = ts
+        self.channel_id = channel_id
         self.user_id = user_id
         self.bot_id = bot_id
         self.subtype = subtype
@@ -22,6 +23,7 @@ class Message(Dbconnection):
         create_table = f"CREATE TABLE {cls.table_name} (\
                             id INTEGER PRIMARY KEY AUTOINCREMENT,\
                             ts TIMESTAMP,\
+                            channel_id VARCHAR(50),\
                             user_id VARCHAR(50),\
                             bot_id VARCHAR(50), \
                             subtype VARCHAR(50), \

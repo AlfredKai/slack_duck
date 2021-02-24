@@ -28,6 +28,6 @@ class Channel(Dbconnection):
 
     @classmethod
     def get_channel_info(cls):
-        query = f'SELECT * FROM {cls.table_name} WHERE id=(?)'
-        data = connection.cursor().execute(query, (config.channel_id,)).fetchone()
+        query = f'SELECT * FROM {cls.table_name}' # support only one channel for now
+        data = connection.cursor().execute(query).fetchone()
         return Channel(*data)

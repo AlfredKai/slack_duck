@@ -9,7 +9,7 @@ from model.channel import Channel
 import config
 
 
-def save_channel_history():
+def save_channel_history(token, channel_id):
     Message.drop_table()
     Message.create_table()
 
@@ -17,8 +17,7 @@ def save_channel_history():
     count = 0
 
     while True:
-        data, cursor = conversation.history(
-            config.token, config.channel_id, cursor)
+        data, cursor = conversation.history(token, channel_id, cursor)
         first_msg = data[0]
         print('first message', time.strftime('%Y-%m-%d %H:%M:%S',
                                              time.localtime(float(first_msg["ts"]))), first_msg['text'])
@@ -28,6 +27,7 @@ def save_channel_history():
             for msg in messages:
                 Message(None,
                         msg["ts"],
+                        channel_id,
                         msg.get('user', None),
                         msg.get('bot_id', None),
                         msg.get('subtype', None),
@@ -41,7 +41,7 @@ def save_channel_history():
 
                 if 'thread_ts' in msg and not is_thread:
                     data, cursor = conversation.replies(
-                        config.token, config.channel_id, msg['thread_ts'])
+                        token, channel_id, msg['thread_ts'])
                     save_messages(data, True)
 
         save_messages(data, False)
@@ -53,14 +53,14 @@ def save_channel_history():
     print(f'saved {count} messages.')
 
 
-def save_users(user_ids):
+def save_users(token, user_ids):
     User.drop_table()
     User.create_table()
 
     count = 0
 
     for id in user_ids:
-        data = user_info(config.token, id)
+        data = user_info(token, id)
         user = data['user']
         profile = user['profile']
         if user['name'] == 'hikaru4':
@@ -73,11 +73,11 @@ def save_users(user_ids):
     print(f'saved {count} users.')
 
 
-def save_channel_info():
+def save_channel_info(token, channel_id):
     Channel.drop_table()
     Channel.create_table()
 
-    data = conversation.info(config.token, config.channel_id)
+    data = conversation.info(token, channel_id)
 
     Channel(data['id'], data['name'], data['topic']['value'],
             data['purpose']['value'], data['creator'], data['created']).save()
@@ -86,6 +86,6 @@ def save_channel_info():
     print(f'saved channel info.')
 
 
-save_channel_info()
-save_channel_history()
-save_users(Message.get_user_ids())
+save_channel_info(config.token, config.channel_id)
+save_channel_history(config.token, config.channel_id)
+save_users(config.token, Message.get_user_ids())
