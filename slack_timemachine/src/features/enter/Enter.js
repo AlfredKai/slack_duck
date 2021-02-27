@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { chooseWelcomeMessages, countingMessage } from '../../config';
 import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+
+import { chooseWelcomeMessages, countingMessage } from '../../config';
 import { fetchEnter, selectIsEntered, fetchVisitCount } from './enterSlice';
 
 function LockIcon({ onClick }) {
@@ -27,9 +29,12 @@ const welcomeMessage = chooseWelcomeMessages();
 
 export function Enter() {
   const dispatch = useDispatch();
+  const history = useHistory();
   const isEntered = useSelector(selectIsEntered);
+  if (isEntered) history.push('/home');
   const visitCount = useSelector((state) => state.enter.visitCount);
   const [pass, setPass] = useState('');
+
   useEffect(() => {
     dispatch(fetchVisitCount());
   }, [dispatch]);
@@ -68,7 +73,7 @@ export function Enter() {
           <LockIcon className="m-2" onClick={handleClick} />
         </div>
         {isEntered === false && (
-          <div className="text-3xl text-red-700 m-4 font-bold">大P拉幹</div>
+          <div className="text-3xl text-red-700 m-4 font-bold">密碼錯誤</div>
         )}
       </main>
       <footer>

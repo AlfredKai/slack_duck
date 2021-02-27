@@ -89,17 +89,17 @@ export function Conversation() {
       </div>
     ));
   return (
-    <div className="flex">
+    <div className="h-full grid grid-cols-6 divide-gray-300 divide-x">
       <div
         className={
-          'h-screen overflow-y-auto' + (replies.length !== 0 ? ' w-3/4' : '')
+          'h-full overflow-y-auto' + (replies.length === 0 ? ' col-span-full' : ' col-span-4')
         }
       >
         {messageSection(messages)}
         {!isEnd && <Loader ref={loaderRef} />}
       </div>
       {replies.length !== 0 && (
-        <div className="w-1/4 h-screen overflow-y-auto">
+        <div className="col-span-2 overflow-y-auto">
           {messageSection(replies, true)}
         </div>
       )}
