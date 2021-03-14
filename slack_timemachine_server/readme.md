@@ -1,4 +1,11 @@
-# Slack Time Machine Api
+# Slack Timemachine Server
+
+Slack timemachine api.
+
+## Built With
+
+- Flask
+- sqlite
 
 ## Usage
 
